@@ -1,6 +1,20 @@
 import { useEffect, useState } from 'react';
 import axios from "axios"
+import { useDispatch, useSelector } from 'react-redux'
+import type { RootState, AppDispatch } from '../store/store'
+import type {TypedUseSelectorHook} from 'react-redux'
+
+import { addItem } from '../slices/cartSlice';
+
+
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+export const useAppDispatch = () => useDispatch<AppDispatch>()
+
+
+
 const Home = () => {
+    const cartItems = useAppSelector(state => state.cart.cart)
+    const dispatch = useAppDispatch();
     interface Product {
         id: number,
         title: string,
@@ -44,6 +58,9 @@ const Home = () => {
         setCurrentPage(prev => prev + 1)
     }
     console.log(products)
+    const onAddHandler = (product: Product) => {
+        dispatch(addItem(product))
+    }
     return (
         <div className='flex flex-col justify-center items-center'>
             <h2 className=''>Products</h2>
@@ -56,7 +73,7 @@ const Home = () => {
                         <p>{product.description}</p>
                         <div className='flex justify-between gap-4 mt-4 items-center'>
                             <p>{product.price}</p>
-                            <button className='border px-4 py-2 bg-gray-900 text-white'>add to cart</button>
+                            <button onClick={() => onAddHandler(product)} className='border px-4 py-2 bg-gray-900 text-white'>add to cart</button>
                         </div>
                     </div>)
                 }
@@ -70,6 +87,7 @@ const Home = () => {
                 }
                 <button className='w-30 px-4 py-2 border' onClick={onNextHandler}>next</button>
             </div>
+            {cartItems.length}
         </div>
     );
 }
