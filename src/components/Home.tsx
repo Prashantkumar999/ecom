@@ -54,7 +54,10 @@ const Home = () => {
                         <p className=''>{product.title}</p>
                         <img src={product.thumbnail} />
                         <p>{product.description}</p>
-                        <p>{product.price}</p>
+                        <div className='flex justify-between gap-4 mt-4 items-center'>
+                            <p>{product.price}</p>
+                            <button className='border px-4 py-2 bg-gray-900 text-white'>add to cart</button>
+                        </div>
                     </div>)
                 }
             </div>
