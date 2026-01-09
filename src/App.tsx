@@ -2,10 +2,12 @@ import { BrowserRouter, Routes, Link, Route } from 'react-router-dom'
 import './App.css'
 import Home from './components/Home'
 import { useAppSelector } from './components/Home'
+import Cart from './components/Cart'
 // import { useAppDispatch } from './components/Home'
 
 function App() {
   const items = useAppSelector(state => state.cart.cart)
+  console.log(items)
   return (
     <div className=''>
       <BrowserRouter>
@@ -16,6 +18,7 @@ function App() {
         </nav>
         <Routes>
           <Route path='/' element={<Home />} />
+          <Route path='/cart' element={<Cart />} />
         </Routes>
       </BrowserRouter>
     </div>

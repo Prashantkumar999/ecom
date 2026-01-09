@@ -9,10 +9,11 @@ interface cartItem {
     thumbnail: string,
 }
 interface cartState {
-    cart: cartItem[]
+    cart: cartItem[],
 }
+
 const initialState: cartState = {
-    cart: []
+    cart: [],
 }
 
 const cartSlice = createSlice({
@@ -21,10 +22,13 @@ const cartSlice = createSlice({
     reducers: {
         addItem: (state, action: PayloadAction<cartItem>) => {
             state.cart.push(action.payload)
+        },
+        removeItem: (state, action: PayloadAction<number>) => {
+            state.cart = state.cart.filter((item) => item.id !== action.payload)
         }
     }
 
 })
 
-export const { addItem} = cartSlice.actions;
+export const { addItem,removeItem } = cartSlice.actions;
 export default cartSlice.reducer;
