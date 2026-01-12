@@ -19,7 +19,7 @@ export const useAppDispatch = () => useDispatch<AppDispatch>()
 const Home = () => {
     const dispatch = useAppDispatch()
     const cartItems = useAppSelector(state => state.cart.cart)
-    const { products, loading, searchResults,filter} =
+    const { products, loading, searchResults, filter } =
         useAppSelector(state => state.products)
 
 
@@ -39,8 +39,16 @@ const Home = () => {
             dispatch(clearSearchResults())
             return
         }
-        dispatch(searchProducts(search))
-    }, [search, dispatch])
+
+        const timeoutId = setTimeout(() => {
+            dispatch(searchProducts(search))
+        }, 500)
+
+        return () => {
+            clearTimeout(timeoutId)
+        }
+    }, [search,])
+
 
     useEffect(() => {
         setCurrentPage(1)
@@ -63,18 +71,23 @@ const Home = () => {
     const onAddHandler = (product: Product) => {
         dispatch(addItem(product))
     }
-    const isInCart = (id: number) => {
-        return cartItems.some(item => item.id === id)
+    const getCartQuantity = (id: number) => {
+        const item = cartItems.find(item => item.id === id)
+        return item ? (item.quantity || 1) : 0
     }
 
     // console.log(searchResults.length)
+    const onchangeHandler = (value: string) => {
+        const value2 = value.replace(/[^a-zA-Z0-9]/g, "")
+        setSearch(value2)
+    }
     return (
         <div className='flex flex-col justify-center items-center mb-5'>
             <div>
                 <h2 className=''>Products</h2>
                 <div className='flex gap-3 mb-4'>
                     <button
-                        className={`border px-4 py-2 ${filter==="beauty"?"bg-gray-300":""}`}
+                        className={`border px-4 py-2 ${filter === "beauty" ? "bg-gray-300" : ""}`}
                         onClick={() => {
                             setSearch("")
                             dispatch(filterByCategory("beauty"))
@@ -83,7 +96,7 @@ const Home = () => {
                         beauty
                     </button>
                     <button
-                        className={`border px-4 py-2 ${filter==="fragrances"?"bg-gray-300":""}`}
+                        className={`border px-4 py-2 ${filter === "fragrances" ? "bg-gray-300" : ""}`}
                         onClick={() => {
                             setSearch("")
                             dispatch(filterByCategory("fragrances"))
@@ -92,7 +105,7 @@ const Home = () => {
                         fragrances
                     </button>
                     <button
-                        className={`border px-4 py-2 ${filter==="furniture"?"bg-gray-300":""}`}
+                        className={`border px-4 py-2 ${filter === "furniture" ? "bg-gray-300" : ""}`}
                         onClick={() => {
                             setSearch("")
                             dispatch(filterByCategory("furniture"))
@@ -101,11 +114,12 @@ const Home = () => {
                         furniture
                     </button>
                     <button
-                        className='border px-4 py-2'
+                        className='border px-4 py-2 hover:scale-95 active:bg-green-300'
                         onClick={() => {
                             setSearch("")
                             dispatch(clearFilter())
                         }}
+
                     >
                         clear
                     </button>
@@ -117,10 +131,10 @@ const Home = () => {
                     className='w-100 px-2 py-2 border rounded-lg'
                     placeholder='search....'
                     type='text'
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => onchangeHandler(e.target.value)}
                     value={search}
                 />
-                <div className={`absolute bg-white max-h-110 overflow-x-hidden overflow-scroll ${searchResults.length===0 ? "hidden" : ""}`}>
+                <div className={`absolute bg-white max-h-110 overflow-x-hidden overflow-scroll ${searchResults.length === 0 ? "hidden" : ""}`}>
                     {search &&
                         searchResults.map(item => (
                             <div
@@ -146,13 +160,14 @@ const Home = () => {
                         <p>{product.description}</p>
                         <div className='flex justify-between gap-4 mt-4 items-center'>
                             <p>{product.price}</p>
-                            <button
-                                onClick={() => onAddHandler(product)}
-                                disabled={isInCart(product.id)}
-                                className={`border px-4 py-2 text-white 
-                                    ${isInCart(product.id) ? "bg-green-600 cursor-not-allowed" : "bg-gray-900"}`} >
-                                {isInCart(product.id) ? "Added" : "Add"}
-                            </button>
+                            <div className='flex items-center gap-2'>
+                                {getCartQuantity(product.id) > 0 && <span className='text-sm'>Qty: {getCartQuantity(product.id)}</span>}
+                                <button
+                                    onClick={() => onAddHandler(product)}
+                                    className='border px-4 py-2 text-white bg-gray-900'>
+                                    Add
+                                </button>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -160,7 +175,8 @@ const Home = () => {
 
             <div className='flex gap-4 pt-4'>
                 <button
-                    className='w-30 px-4 py-2 border'
+                 disabled={currentPage === 1}
+                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage===1?"text-gray-300":""}`}
                     onClick={onPreviousHandler}
                 >
                     previous
@@ -177,7 +193,8 @@ const Home = () => {
                 ))}
 
                 <button
-                    className='w-30 px-4 py-2 border'
+                    disabled={currentPage === totalPage}
+                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage===totalPage?"text-gray-300":""}`}
                     onClick={onNextHandler}
                 >
                     next

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 import axiosInstance from "../api/axiosInstant"
+import { API_PATHS } from "../constants"
 
 export interface Product {
   id: number
@@ -19,18 +20,18 @@ interface ProductsState {
 }
 
 export const fetchProducts = createAsyncThunk<Product[]>(
-  "products/fetchProducts",
+  API_PATHS.PRODUCTS,
   async () => {
-    const res = await axiosInstance.get("/products")
+    const res = await axiosInstance.get(API_PATHS.PRODUCT_LIST)
     return res.data.products
   }
 )
 
 export const searchProducts = createAsyncThunk<Product[], string>(
-  "products/searchProducts",
+  API_PATHS.PRODUCTS_SEARCH,
   async (query) => {
     const res = await axiosInstance.get(
-      `/products/search?q=${query}`
+      `${API_PATHS.PRODUCT_SEARCH}?q=${query}`
     )
     return res.data.products
   }

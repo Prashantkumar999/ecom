@@ -1,7 +1,7 @@
 import axios from "axios"
-
+import { API_PATHS } from "../constants"
 const axiosInstance = axios.create({
-  baseURL: "https://dummyjson.com",
+  baseURL:API_PATHS.BASE_URL,
 })
 
 axiosInstance.interceptors.request.use(

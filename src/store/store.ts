@@ -1,12 +1,29 @@
 import { configureStore} from '@reduxjs/toolkit'
-import { persistReducer, persistStore } from 'redux-persist'
+import { persistReducer, persistStore, createTransform } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import cartReducer from '../slices/cartSlice'
 import productReducer from '../slices/productSlice'
 
+const cartTransform = createTransform(
+    (inboundState: any) => inboundState,
+    (outboundState: any) => {
+        if (outboundState && outboundState.cart && Array.isArray(outboundState.cart)) {
+            return {
+                ...outboundState,
+                cart: outboundState.cart.map((item: any) => ({
+                    ...item,
+                    quantity: item.quantity || 1
+                }))
+            }
+        }
+        return outboundState
+    }
+)
+
 const cartPersistConfig = {
     key: 'cart',
     storage,
+    transforms: [cartTransform]
 }
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer)
@@ -16,12 +33,6 @@ const store = configureStore({
         cart: persistedCartReducer,
         products: productReducer
     },
-    middleware: (getDefaultMiddleware) =>
-        getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: ['persist/PERSIST', 'persist/REHYDRATE'],
-            },
-        }),
 })
 
 export type RootState = ReturnType<typeof store.getState>
