@@ -7,7 +7,8 @@ import {
     fetchProducts,
     searchProducts,
     filterByCategory,
-    clearFilter
+    clearFilter,
+    clearSearchResults
 } from "../slices/productSlice"
 import { addItem } from "../slices/cartSlice"
 import type { Product } from "../slices/productSlice"
@@ -34,8 +35,19 @@ const Home = () => {
     }, [])
 
     useEffect(() => {
-        if (!search.trim()) return
+        if (!search.trim()) {
+            dispatch(clearSearchResults())
+            return
+        }
         dispatch(searchProducts(search))
+    }, [search, dispatch])
+
+    useEffect(() => {
+        setCurrentPage(1)
+    }, [filter])
+
+    useEffect(() => {
+        setCurrentPage(1)
     }, [search])
 
     const onPreviousHandler = () => {
@@ -63,26 +75,37 @@ const Home = () => {
                 <div className='flex gap-3 mb-4'>
                     <button
                         className={`border px-4 py-2 ${filter==="beauty"?"bg-gray-300":""}`}
-                        onClick={() => dispatch(filterByCategory("beauty"))}
-
+                        onClick={() => {
+                            setSearch("")
+                            dispatch(filterByCategory("beauty"))
+                        }}
                     >
                         beauty
                     </button>
                     <button
                         className={`border px-4 py-2 ${filter==="fragrances"?"bg-gray-300":""}`}
-                        onClick={() => dispatch(filterByCategory("fragrances"))}
+                        onClick={() => {
+                            setSearch("")
+                            dispatch(filterByCategory("fragrances"))
+                        }}
                     >
                         fragrances
                     </button>
                     <button
                         className={`border px-4 py-2 ${filter==="furniture"?"bg-gray-300":""}`}
-                        onClick={() => dispatch(filterByCategory("furniture"))}
+                        onClick={() => {
+                            setSearch("")
+                            dispatch(filterByCategory("furniture"))
+                        }}
                     >
                         furniture
                     </button>
                     <button
                         className='border px-4 py-2'
-                        onClick={() => dispatch(clearFilter())}
+                        onClick={() => {
+                            setSearch("")
+                            dispatch(clearFilter())
+                        }}
                     >
                         clear
                     </button>

@@ -15,7 +15,7 @@ export default function Cart() {
         setItemToDelete(-1)
         dispatch(removeItem(id))
     }
-    const onCancelHandler = (id: number) => {
+    const onCancelHandler = () => {
         setItemToDelete(-1)
     }
     return (
@@ -43,7 +43,7 @@ export default function Cart() {
                     itemToDelete !== -1 && <div className='flex flex-col items-center gap-2'>
                         <p>do you really want to delete this item???</p>
                         <div className='flex gap-5'>
-                            <button onClick={() => onCancelHandler(itemToDelete)} className='border px-4 py-2 bg-red-200 hover:scale-105 rounded-lg'>
+                            <button onClick={() => onCancelHandler()} className='border px-4 py-2 bg-red-200 hover:scale-105 rounded-lg'>
                                 cancel
                             </button>
                             <button onClick={() => onConfirmHandler(itemToDelete)} className='border px-4 py-2 bg-green-200 hover:scale-105 rounded-lg'>

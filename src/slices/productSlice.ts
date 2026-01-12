@@ -53,10 +53,15 @@ const productsSlice = createSlice({
       state.products = state.allProducts.filter(
         item => item.category === action.payload
       )
+      state.searchResults = []
     },
     clearFilter(state) {
       state.filter = ""
       state.products = state.allProducts
+      state.searchResults = []
+    },
+    clearSearchResults(state) {
+      state.searchResults = []
     },
   },
   extraReducers: builder => {
@@ -78,5 +83,5 @@ const productsSlice = createSlice({
   },
 })
 
-export const { filterByCategory, clearFilter } = productsSlice.actions
+export const { filterByCategory, clearFilter, clearSearchResults } = productsSlice.actions
 export default productsSlice.reducer
