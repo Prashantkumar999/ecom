@@ -12,7 +12,8 @@ export default function Cart() {
   const cartItems = useAppSelector(state => state.cart.cart)
   const dispatch = useAppDispatch();
   const [itemToDelete, setItemToDelete] = useState<number>(-1)
-
+console.log("testing,,,,,,,,,,,,,,")
+  window.alert("dskh")
   const onConfirmHandler = (id: number) => {
     setItemToDelete(-1)
     dispatch(removeItem(id))

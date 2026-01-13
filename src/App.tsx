@@ -5,8 +5,9 @@ import { useAppSelector } from './components/Home'
 import NotFound from './components/NotFound'
 import { lazy, Suspense } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import Cart from './components/Cart'
 
-const LazyCart = lazy(() => import('./components/Cart'))
+// const LazyCart = lazy(() => import('./components/Cart'))
 
 function ErrorFallback({ error, resetErrorBoundary }: any) {
   return (
@@ -59,9 +60,10 @@ function App() {
           path="/cart"
           element={
             <ErrorBoundary FallbackComponent={ErrorFallback}>
-              <Suspense fallback={<div>Loading cart...</div>}>
-                <LazyCart />
-              </Suspense>
+              {/* <Suspense fallback={<div>Loading cart...</div>}> */}
+                {/* <LazyCart /> */}
+                <Cart/>
+              {/* </Suspense> */}
             </ErrorBoundary>
           }
         />

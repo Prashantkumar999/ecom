@@ -16,10 +16,9 @@ const cartTransform = createTransform(
                 }))
             }
         }
-        console.log("testing....",outboundState)
         return outboundState
     }
-)
+    )
 
 const cartPersistConfig = {
     key: 'cart',
