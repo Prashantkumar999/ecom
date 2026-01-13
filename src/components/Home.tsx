@@ -78,7 +78,7 @@ const Home = () => {
 
     // console.log(searchResults.length)
     const onchangeHandler = (value: string) => {
-        const value2 = value.replace(/[^a-zA-Z0-9]/g, "")
+        const value2 = value.replace(/[^a-zA-Z0-9 ]/g, "")
         setSearch(value2)
     }
     return (
@@ -101,8 +101,7 @@ const Home = () => {
                             setSearch("")
                             dispatch(filterByCategory("fragrances"))
                         }}
-                    >
-                        fragrances
+                    > fragrances
                     </button>
                     <button
                         className={`border px-4 py-2 ${filter === "furniture" ? "bg-gray-300" : ""}`}
@@ -175,8 +174,8 @@ const Home = () => {
 
             <div className='flex gap-4 pt-4'>
                 <button
-                 disabled={currentPage === 1}
-                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage===1?"text-gray-300":""}`}
+                    disabled={currentPage === 1}
+                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage === 1 ? "text-gray-300 hidden" : ""}`}
                     onClick={onPreviousHandler}
                 >
                     previous
@@ -194,7 +193,7 @@ const Home = () => {
 
                 <button
                     disabled={currentPage === totalPage}
-                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage===totalPage?"text-gray-300":""}`}
+                    className={`w-30 px-4 py-2 border hover:scale-95 active:bg-green-300 ${currentPage === totalPage ? "text-gray-300 hidden" : ""}`}
                     onClick={onNextHandler}
                 >
                     next

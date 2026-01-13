@@ -16,6 +16,7 @@ const cartTransform = createTransform(
                 }))
             }
         }
+        console.log("testing....",outboundState)
         return outboundState
     }
 )
