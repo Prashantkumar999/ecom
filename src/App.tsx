@@ -34,8 +34,7 @@ function App() {
   }, [dispatch])
 
   const totalQuantity = items.reduce(
-    (sum, item) => sum + (item.quantity || 1),
-    0
+    (sum, item) => sum + (item.quantity || 1), 0
   )
 
   return (
