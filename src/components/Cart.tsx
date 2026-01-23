@@ -1,7 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useAppSelector } from '../components/Home'
 import { useAppDispatch } from '../components/Home'
-import { removeItem, increaseQuantity, decreaseQuantity } from '../slices/cartSlice';
+import { removeItemFromCart, updateItemQuantity, fetchCart } from '../slices/cartSlice';
 import { createPortal } from 'react-dom';
 
 const portalRoot = document.getElementById("portal");
@@ -10,16 +10,40 @@ const portalRoot = document.getElementById("portal");
 export default function Cart() {
 
   const cartItems = useAppSelector(state => state.cart.cart)
+  const loading = useAppSelector(state => state.cart.loading)
   const dispatch = useAppDispatch();
   const [itemToDelete, setItemToDelete] = useState<number>(-1)
-console.log("testing,,,,,,,,,,,,,,")
-  window.alert("dskh")
-  const onConfirmHandler = (id: number) => {
+
+  // Fetch cart from backend when component mounts
+  useEffect(() => {
+    dispatch(fetchCart());
+  }, [dispatch]);
+
+  const onConfirmHandler = async (id: number) => {
     setItemToDelete(-1)
-    dispatch(removeItem(id))
+    await dispatch(removeItemFromCart(id))
   }
   const onCancelHandler = () => {
     setItemToDelete(-1)
+  }
+
+  const handleIncreaseQuantity = async (id: number) => {
+    const item = cartItems.find(item => item.id === id);
+    if (item) {
+      const newQuantity = (item.quantity || 1) + 1;
+      await dispatch(updateItemQuantity({ itemId: id, quantity: newQuantity }));
+    }
+  }
+
+  const handleDecreaseQuantity = async (id: number) => {
+    const item = cartItems.find(item => item.id === id);
+    if (item) {
+      const currentQuantity = item.quantity || 1;
+      if (currentQuantity > 1) {
+        const newQuantity = currentQuantity - 1;
+        await dispatch(updateItemQuantity({ itemId: id, quantity: newQuantity }));
+      }
+    }
   }
 
   const total = useMemo(() => {
@@ -42,26 +66,51 @@ console.log("testing,,,,,,,,,,,,,,")
           <div className='flex  gap-10 items-center'>
             <p>{product.price || 0} x {product.quantity || 1} = {((product.price || 0) * (product.quantity || 1)).toFixed(2)}</p>
             <div className='flex gap-2 items-center'>
-              <button onClick={() => dispatch(decreaseQuantity(product.id))} className='border px-2 py-1'>-</button>
+              <button 
+                onClick={() => handleDecreaseQuantity(product.id)} 
+                className='border px-2 py-1'
+                disabled={loading}
+              >
+                -
+              </button>
               <span>{product.quantity || 1}</span>
-              <button onClick={() => dispatch(increaseQuantity(product.id))} className='border px-2 py-1'>+</button>
+              <button 
+                onClick={() => handleIncreaseQuantity(product.id)} 
+                className='border px-2 py-1'
+                disabled={loading}
+              >
+                +
+              </button>
             </div>
-            <button className='bg-red-400 px-3 py-1 text-white' onClick={() => setItemToDelete(product.id)}>remove item</button>
+            <button 
+              className='bg-red-400 px-3 py-1 text-white' 
+              onClick={() => setItemToDelete(product.id)}
+              disabled={loading}
+            >
+              remove item
+            </button>
           </div>
         </div>
       </div>
     ))
-  }, [cartItems, dispatch])
+  }, [cartItems, loading])
 
   if (!portalRoot) return null;
+
+  if (loading && cartItems.length === 0) {
+    return <div className='text-center'>Loading cart...</div>;
+  }
 
   return (
     <div className=' '>
       <div className='flex flex-col'>
         {cartItemsList}
       </div>
-      <div className='mt-4 border-t pt-4'>
-        <p className='text-xl font-bold'>Total: {total.toFixed(2)}</p>
+      <div className='mt-4 pt-4'>
+        {
+          cartItems.length === 0 ? <div className='text-center'>Cart is empty</div> : ""
+        }
+        <p className={`text-xl font-bold ${cartItems.length === 0 ? "hidden" : ""}`}>Total: {total.toFixed(2)}</p>
       </div>
       {/* ${itemToDelete!==-1?"":"hidden" }*/}
       {/* top-2 left-[40%] bg-white border p-10  */}
@@ -85,6 +134,7 @@ console.log("testing,,,,,,,,,,,,,,")
                   <button
                     onClick={() => onConfirmHandler(itemToDelete)}
                     className="rounded-lg border bg-green-200 px-4 py-2 hover:scale-105"
+                    disabled={loading}
                   >
                     Confirm
                   </button>

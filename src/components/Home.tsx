@@ -10,7 +10,7 @@ import {
     clearFilter,
     clearSearchResults
 } from "../slices/productSlice"
-import { addItem } from "../slices/cartSlice"
+import { addItemToCart } from "../slices/cartSlice"
 import type { Product } from "../slices/productSlice"
 
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
@@ -68,8 +68,8 @@ const Home = () => {
         setCurrentPage(prev => prev + 1)
     }
 
-    const onAddHandler = (product: Product) => {
-        dispatch(addItem(product))
+    const onAddHandler = async (product: Product) => {
+        await dispatch(addItemToCart(product))
     }
     const getCartQuantity = (id: number) => {
         const item = cartItems.find(item => item.id === id)
@@ -185,7 +185,7 @@ const Home = () => {
                     <div
                         key={index}
                         onClick={() => setCurrentPage(index + 1)}
-                        className={`px-4 py-2 border ${currentPage === index + 1 ? "bg-green-200" : ""}`}
+                        className={`px-4 py-2 border cursor-pointer ${currentPage === index + 1 ? "bg-green-200" : ""}`}
                     >
                         <p>{index + 1}</p>
                     </div>

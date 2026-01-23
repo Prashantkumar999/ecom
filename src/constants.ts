@@ -5,6 +5,6 @@ export const API_PATHS = {
     PRODUCTS_SEARCH: "products/searchProducts",
     PRODUCT_LIST: "/product",
     PRODUCT_SEARCH: "/products/search",
-    BASE_URL:"https://dummyjson.com"
+    BASE_URL: "http://localhost:3000"
   }
   

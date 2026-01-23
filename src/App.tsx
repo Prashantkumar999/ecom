@@ -1,10 +1,11 @@
 import { BrowserRouter, Routes, Link, Route } from 'react-router-dom'
 import './App.css'
 import Home from './components/Home'
-import { useAppSelector } from './components/Home'
+import { useAppSelector, useAppDispatch } from './components/Home'
 import NotFound from './components/NotFound'
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { ErrorBoundary } from 'react-error-boundary'
+import { fetchCart } from './slices/cartSlice'
 
 const LazyCart = lazy(() => import('./components/Cart'))
 
@@ -25,6 +26,12 @@ function ErrorFallback({ error, resetErrorBoundary }: any) {
 
 function App() {
   const items = useAppSelector(state => state.cart.cart)
+  const dispatch = useAppDispatch()
+
+  // fetch cart from backend when app loads
+  useEffect(() => {
+    dispatch(fetchCart())
+  }, [dispatch])
 
   const totalQuantity = items.reduce(
     (sum, item) => sum + (item.quantity || 1),
